@@ -1,0 +1,98 @@
+---
+/**
+ * Vídeo de fondo a prueba de iPhone y Android.
+ *
+ * No hace falta ningún plugin: lo que evita el "circulito" de reproducción en iOS es
+ *  1. muted + playsinline (+ webkit-playsinline para iOS antiguos) → Safari permite autoplay
+ *  2. forzar .muted = true por JS y llamar a play() (React/Astro a veces no ponen el atributo)
+ *  3. ocultar los controles nativos de WebKit por CSS
+ *  4. si iOS bloquea el autoplay (modo Ahorro de batería), se queda el póster, sin botón.
+ * El MP4 es H.264 sin audio y con "faststart"; el WebM (VP9) es más ligero para Chrome.
+ */
+import { asset } from '../i18n';
+import { images, video } from '../data/site';
+---
+<div class="hero-video" data-hero-video>
+  <video
+    class="hero-video__media"
+    autoplay
+    muted
+    loop
+    playsinline
+    webkit-playsinline
+    disablepictureinpicture
+    disableremoteplayback
+    preload="auto"
+    poster={asset(images.heroPoster)}
+    aria-hidden="true"
+    tabindex="-1"
+  >
+    <source src={asset(video.webm)} type="video/webm" />
+    <source src={asset(video.mp4)} type="video/mp4" />
+  </video>
+</div>
+
+<script>
+  function initHeroVideo(wrapper: HTMLElement) {
+    const v = wrapper.querySelector('video');
+    if (!v) return;
+    // iOS exige que el vídeo esté silenciado como propiedad, no solo como atributo
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+    v.setAttribute('muted', '');
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
+
+    const tryPlay = () => {
+      const p = v.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => wrapper.classList.add('is-playing')).catch(() => {
+          // Autoplay bloqueado (p. ej. Ahorro de batería en iPhone): queda el póster.
+          wrapper.classList.remove('is-playing');
+        });
+      }
+    };
+
+    v.addEventListener('playing', () => wrapper.classList.add('is-playing'));
+    if (v.readyState >= 2) tryPlay();
+    else v.addEventListener('canplay', tryPlay, { once: true });
+
+    // Reanudar al volver a la pestaña o tras el primer toque (iOS lo permite)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && v.paused) tryPlay();
+    });
+    const unlock = () => { if (v.paused) tryPlay(); };
+    window.addEventListener('touchstart', unlock, { once: true, passive: true });
+    window.addEventListener('click', unlock, { once: true });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-hero-video]').forEach(initHeroVideo);
+</script>
+
+<style define:vars={{ poster: `url('${asset(images.heroPosterWebp)}')` }}>
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    background: var(--c-ink-soft) var(--poster) center / cover no-repeat;
+    pointer-events: none;
+  }
+  .hero-video__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  /* Ocultar cualquier control nativo de WebKit (el "circulito" de play en iPhone) */
+  .hero-video__media::-webkit-media-controls,
+  .hero-video__media::-webkit-media-controls-panel,
+  .hero-video__media::-webkit-media-controls-play-button,
+  .hero-video__media::-webkit-media-controls-start-playback-button,
+  .hero-video__media::-webkit-media-controls-overlay-play-button,
+  .hero-video__media::-webkit-media-controls-enclosure {
+    display: none !important;
+    -webkit-appearance: none;
+    opacity: 0 !important;
+  }
+</style>

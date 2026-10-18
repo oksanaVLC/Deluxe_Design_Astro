@@ -1,0 +1,52 @@
+---
+// Fuentes autoalojadas (sin Google Fonts → más rápido y sin cookies de terceros)
+import '@fontsource/cormorant-garamond/500-italic.css';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/fahkwang/400.css';
+import '@fontsource/fahkwang/500.css';
+import '@fontsource/fahkwang/600.css';
+import '@fontsource/montserrat/400.css'; // respaldo cirílico para ruso
+import '@fontsource/montserrat/500.css';
+import '@fontsource/montserrat/600.css';
+
+import '../styles/animations.css';
+import '../styles/global.css';
+import '../styles/variables.css';
+
+import { images } from '../data/site';
+import { asset, defaultLang, languages, localizedHome, useTranslations, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const site = Astro.site ?? new URL('https://example.com');
+const canonical = new URL(localizedHome(lang), site).href;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta name="theme-color" content="#121212" />
+    <link rel="canonical" href={canonical} />
+    {languages.map((l) => (
+      <link rel="alternate" hreflang={l.code} href={new URL(localizedHome(l.code), site).href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL(localizedHome(defaultLang), site).href} />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(asset(images.heroPoster), site).href} />
+
+    <!-- El póster del vídeo se pide cuanto antes: es lo primero que se ve -->
+    <link rel="preload" as="image" href={asset(images.heroPosterWebp)} type="image/webp" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,93 @@
+/* ==========================================================================
+   Variables globales · Deluxe Design Properties
+   Cambia aquí colores, tipografías y tamaños: todos los componentes los usan.
+   Breakpoints (no se pueden usar variables en @media, así que van escritos):
+     · móvil   < 768px
+     · tablet  768px – 1199px
+     · desktop ≥ 1200px
+   ========================================================================== */
+:root {
+  --body-width: 1600px;
+  /* — Colores — */
+  --c-stone: #f4f1ec; /* fondo principal */
+  --c-sand: #e7e0d5; /* fondo bloque dossier */
+  --c-white: #ffffff;
+  --c-ink: #121212; /* texto y fondos oscuros */
+  --c-ink-soft: #1a1816; /* fondo bajo vídeo/fotos mientras cargan */
+  --c-accent: #86664a; /* bronce: eyebrows, números, hover */
+  --c-gold: #c9a97f; /* dorado suave sobre oscuro */
+  --c-social: #e6d198; /* iconos de redes */
+  --c-social-hover: #f3e6c4;
+  --c-muted: #3a3631; /* párrafos sobre claro (contraste AA+) */
+  --c-label: #857c72;
+  --c-line: #d9d2c7;
+  --c-line-input: #bdb4a7;
+  --c-line-dark: #2e2b28;
+  --c-on-dark-muted: #d3ccc2;
+  --c-on-dark-light: #ede7de;
+  --c-on-dark-eyebrow: #e6dccd;
+  --c-overlay: rgba(12, 11, 10, 0.48);
+  --c-overlay-soft: rgba(12, 11, 10, 0.42);
+
+  /* — Tipografías — */
+  --f-heading: "Cormorant Garamond", Georgia, serif;
+  /* Fahkwang no tiene cirílico: en ruso el navegador usa Montserrat automáticamente */
+  --f-body: "Montserrat", system-ui, sans-serif;
+
+  /* — Tamaños de texto (móvil) — */
+  --fs-h1: 60px;
+  --fs-h2: 41px;
+  --fs-h2-xl: 48px; /* "Descubre el entorno" */
+  --fs-h3: 29px;
+  --fs-lead: 22px; /* párrafo del hero */
+  --fs-body: 19px;
+  --fs-small: 18px;
+  --fs-eyebrow: 11px;
+  --fs-button: 12px;
+
+  /* — Espaciado — */
+
+  --pad-x: 20px; /* margen lateral de página */
+  --section-y: 72px; /* padding vertical de secciones */
+  --gap-lg: 40px;
+  --header-h: 76px;
+  --hero-h: 640px;
+
+  /* — Otros — */
+  --ls-eyebrow: 0.3em;
+  --ls-button: 0.2em;
+  --radius-panel: 18px;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --fs-h1: 110px;
+    --fs-h2: 55px;
+    --fs-h2-xl: 65px;
+    --fs-h3: 31px;
+    --fs-lead: 24px;
+    --fs-body: 20px;
+    --fs-small: 19px;
+    --pad-x: 40px;
+    --section-y: 112px;
+    --gap-lg: 56px;
+    --header-h: 96px;
+    --hero-h: 760px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --fs-h1: 144px;
+    --fs-h2: 65px;
+    --fs-h2-xl: 77px;
+    --fs-lead: 25px;
+    --fs-eyebrow: 12px;
+    --pad-x: 64px;
+    --section-y: 144px;
+    --gap-lg: 64px;
+    --header-h: 112px;
+    --hero-h: clamp(720px, 100svh, 900px);
+  }
+}

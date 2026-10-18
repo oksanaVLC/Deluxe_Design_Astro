@@ -1,0 +1,148 @@
+---
+import { useTranslations, asset, type Lang } from '../i18n';
+import { places, sections } from '../data/site';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang).surroundings;
+const items = t.places.map((p, i) => ({ ...p, src: asset(places[i]) }));
+---
+<section id={sections.surroundings} class="env" data-env>
+  {items.map((p, i) => (
+    <img class:list={['env__bg', { 'is-active': i === 0 }]} src={p.src} alt={p.alt} loading="lazy" decoding="async" data-env-bg />
+  ))}
+  <div class="env__overlay" aria-hidden="true"></div>
+
+  <div class="env__inner container">
+    <div class="env__top">
+      <div class="env__intro">
+        <span class="eyebrow env__eyebrow">{t.eyebrow}</span>
+        <h2 class="env__title">{t.title} <em>{t.titleEm}</em></h2>
+        <p class="env__text">{t.text}</p>
+      </div>
+      <div class="env__current" aria-live="polite">
+        <span class="env__place" data-env-title>{items[0].title}</span>
+        <button type="button" class="btn btn--light env__cta" data-env-next>
+          {t.cta}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="env__tabs" role="tablist" aria-label={t.tablist}>
+      {items.map((p, i) => (
+        <button type="button" role="tab" class="env__tab" aria-selected={i === 0 ? 'true' : 'false'} data-env-tab data-title={p.title}>
+          <span class="env__tab-num">{String(i + 1).padStart(2, '0')}</span>
+          <span class="env__tab-label">{p.label}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-env]').forEach((root) => {
+    const bgs = [...root.querySelectorAll<HTMLElement>('[data-env-bg]')];
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-env-tab]')];
+    const title = root.querySelector('[data-env-title]')!;
+    let index = 0;
+    const go = (i: number, focus = false) => {
+      index = (i + tabs.length) % tabs.length;
+      bgs.forEach((b, k) => b.classList.toggle('is-active', k === index));
+      tabs.forEach((tab, k) => {
+        tab.setAttribute('aria-selected', String(k === index));
+        tab.tabIndex = k === index ? 0 : -1;
+      });
+      title.textContent = tabs[index].dataset.title ?? '';
+      if (focus) tabs[index].focus();
+    };
+    tabs.forEach((tab, k) => {
+      tab.addEventListener('click', () => go(k));
+      tab.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') go(index + 1, true);
+        if (e.key === 'ArrowLeft') go(index - 1, true);
+      });
+    });
+    root.querySelector('[data-env-next]')?.addEventListener('click', () => go(index + 1));
+    go(0);
+  });
+</script>
+
+<style>
+  .env {
+    position: relative;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    background: var(--c-ink-soft);
+    color: var(--c-white);
+  }
+  .env__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity 1s ease, transform 8s ease;
+  }
+  .env__bg.is-active { opacity: 1; transform: scale(1.05); }
+  .env__overlay { position: absolute; inset: 0; background: rgba(12, 11, 10, 0.46); }
+
+  .env__inner { position: relative; padding-bottom: 36px; display: flex; flex-direction: column; gap: 36px; }
+  .env__top { display: flex; flex-direction: column; gap: 28px; }
+  .env__intro { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
+  .env__eyebrow { color: var(--c-on-dark-eyebrow); }
+  .env__title { font-family: var(--f-heading); font-weight: 500; font-size: var(--fs-h2-xl); line-height: 1.05; }
+  .env__title em { font-style: italic; }
+  .env__text { font-size: calc(var(--fs-body) + 2px); color: var(--c-on-dark-light); }
+
+  .env__current { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+  .env__place { font-family: var(--f-heading); font-style: italic; font-size: 30px; line-height: 1.1; }
+  .env__cta { height: 54px; padding: 0 28px; border: 0; }
+
+  .env__tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 12px; }
+  .env__tab {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-height: 44px;
+    padding: 14px 0 0;
+    border: 0;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.65);
+    text-align: left;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .env__tab:hover { color: var(--c-white); }
+  .env__tab[aria-selected='true'] { border-top-color: var(--c-social); color: var(--c-white); }
+  .env__tab-num { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; }
+  .env__tab-label { font-size: 12px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.3; overflow-wrap: anywhere; }
+
+  @media (min-width: 768px) {
+    .env { height: 760px; }
+    .env__inner { padding-bottom: 48px; gap: 48px; }
+    .env__intro { gap: 22px; }
+    .env__text { font-size: 23px; }
+    .env__place { font-size: 34px; }
+    .env__tab { flex-direction: row; align-items: baseline; gap: 10px; }
+    .env__tab-label { font-size: 13px; letter-spacing: 0.14em; }
+  }
+
+  @media (min-width: 1200px) {
+    .env { height: 780px; }
+    .env__overlay { background: var(--c-overlay-soft); }
+    .env__inner { padding-bottom: 56px; gap: 56px; }
+    .env__top { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 64px; }
+    .env__text { font-size: 24px; }
+    .env__current { align-items: flex-end; gap: 16px; text-align: right; }
+    .env__place { font-size: 38px; }
+    .env__tabs { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+    .env__tab { gap: 10px; padding-top: 16px; }
+    .env__tab-label { letter-spacing: 0.16em; }
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+import { socials } from '../data/site';
+
+interface Props {
+  /** row = horizontal · column = vertical (hero en tablet/móvil) */
+  direction?: 'row' | 'column';
+  /** Escala de los iconos (1 = tamaño original) */
+  scale?: number;
+  label: string;
+  class?: string;
+}
+const { direction = 'row', scale = 1, label, class: className } = Astro.props;
+---
+<nav class:list={['social', `social--${direction}`, className]} aria-label={label}>
+  {socials.map((s) => (
+    <a href={s.href} class="social__link" aria-label={s.label} target={s.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+      <svg width={Math.round(s.size * scale)} height={Math.round(s.size * scale)} viewBox={s.viewBox} fill="currentColor" aria-hidden="true">
+        <path d={s.path} />
+      </svg>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .social { display: flex; gap: 10px; }
+  .social--column { flex-direction: column; align-items: center; gap: 0; }
+  .social__link {
+    width: 40px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-social);
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  .social__link:hover { transform: scale(1.2); color: var(--c-social-hover); }
+</style>

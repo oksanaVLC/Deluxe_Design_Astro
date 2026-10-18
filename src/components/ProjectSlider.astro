@@ -1,0 +1,183 @@
+---
+import { useTranslations, asset, type Lang } from '../i18n';
+import { slides, sections } from '../data/site';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang).slider;
+const pad = (n: number) => String(n).padStart(2, '0');
+const items = t.slides.map((s, i) => ({ ...s, src: asset(slides[i]) }));
+---
+<section id={sections.newBuild} class="slider container" data-slider aria-roledescription="carousel" aria-label={`${t.eyebrow}: ${t.title} ${t.titleEm}`}>
+  <div class="slider__head">
+    <div class="section-head__title">
+      <span class="eyebrow">{t.eyebrow}</span>
+      <h2 class="h2">{t.title} <em>{t.titleEm}</em></h2>
+    </div>
+    <div class="slider__arrows">
+      <button type="button" class="slider__arrow slider__arrow--prev" aria-label={t.prev} data-slider-prev>
+        <svg width="44" height="16" viewBox="0 0 44 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M43 8H1M8 1L1 8l7 7" /></svg>
+      </button>
+      <button type="button" class="slider__arrow slider__arrow--next" aria-label={t.next} data-slider-next>
+        <svg width="44" height="16" viewBox="0 0 44 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 8h42M36 1l7 7-7 7" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="slider__stage" data-slider-stage>
+    {items.map((s, i) => (
+      <img
+        class:list={['slider__img', { 'is-active': i === 0 }]}
+        src={s.src}
+        alt={s.alt}
+        loading="lazy"
+        decoding="async"
+        data-slide
+        data-title={s.title}
+        data-place={s.place}
+      />
+    ))}
+    <div class="slider__caption" aria-live="polite">
+      <span class="slider__num" data-slider-num>01</span>
+      <span class="slider__divider" aria-hidden="true"></span>
+      <div class="slider__caption-text">
+        <span class="slider__title" data-slider-title>{items[0].title}</span>
+        <span class="slider__place" data-slider-place>{items[0].place}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slider__footer">
+    <span class="slider__count"><span data-slider-count>01</span> / {pad(items.length)}</span>
+    <div class="slider__bars" style={`--n:${items.length}`}>
+      {items.map((_, i) => (
+        <button type="button" class="slider__bar" aria-label={`${t.goTo} ${i + 1}`} aria-current={i === 0 ? 'true' : undefined} data-slider-dot={i}>
+          <span></span>
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-slider]').forEach((root) => {
+    const imgs = [...root.querySelectorAll<HTMLImageElement>('[data-slide]')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-slider-dot]')];
+    const num = root.querySelector('[data-slider-num]')!;
+    const count = root.querySelector('[data-slider-count]')!;
+    const title = root.querySelector('[data-slider-title]')!;
+    const place = root.querySelector('[data-slider-place]')!;
+    const stage = root.querySelector<HTMLElement>('[data-slider-stage]')!;
+    let index = 0;
+
+    const go = (i: number) => {
+      index = (i + imgs.length) % imgs.length;
+      imgs.forEach((img, k) => img.classList.toggle('is-active', k === index));
+      dots.forEach((d, k) => d.toggleAttribute('aria-current', k === index));
+      const label = String(index + 1).padStart(2, '0');
+      num.textContent = label;
+      count.textContent = label;
+      title.textContent = imgs[index].dataset.title ?? '';
+      place.textContent = imgs[index].dataset.place ?? '';
+    };
+
+    root.querySelector('[data-slider-prev]')?.addEventListener('click', () => go(index - 1));
+    root.querySelector('[data-slider-next]')?.addEventListener('click', () => go(index + 1));
+    dots.forEach((d, k) => d.addEventListener('click', () => go(k)));
+
+    // Deslizar con el dedo en móvil
+    let startX = 0;
+    stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+    });
+    // Flechas del teclado cuando el slider tiene el foco
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') go(index - 1);
+      if (e.key === 'ArrowRight') go(index + 1);
+    });
+  });
+</script>
+
+<style>
+  .slider { padding-top: var(--section-y); display: flex; flex-direction: column; gap: 24px; }
+  .slider__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+  .slider__arrows { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .slider__arrow {
+    width: 56px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--c-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.25s ease;
+  }
+  .slider__arrow svg { transition: transform 0.3s ease; }
+  .slider__arrow:hover { color: var(--c-accent); }
+  .slider__arrow--prev:hover svg { transform: translateX(-6px); }
+  .slider__arrow--next:hover svg { transform: translateX(6px); }
+
+  .slider__stage { position: relative; height: 380px; overflow: hidden; background: var(--c-ink-soft); touch-action: pan-y; }
+  .slider__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity 0.9s ease, transform 7s ease; /* fundido + zoom lento (Ken Burns) */
+  }
+  .slider__img.is-active { opacity: 1; transform: scale(1.04); }
+
+  .slider__caption {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: rgba(18, 18, 18, 0.55);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--c-white);
+  }
+  .slider__num { font-family: var(--f-heading); font-style: italic; font-size: 34px; line-height: 1; }
+  .slider__divider { width: 1px; height: 36px; background: rgba(255, 255, 255, 0.35); }
+  .slider__caption-text { display: flex; flex-direction: column; gap: 4px; }
+  .slider__title { font-family: var(--f-heading); font-weight: 500; font-size: 25px; line-height: 1.1; }
+  .slider__place { font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--c-on-dark-eyebrow); }
+
+  .slider__footer { display: flex; align-items: center; gap: 20px; }
+  .slider__count { min-width: 70px; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; color: var(--c-muted); }
+  .slider__bars { flex: 1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 12px; }
+  .slider__bar { height: 44px; padding: 0; border: 0; background: transparent; display: flex; align-items: center; }
+  .slider__bar span { display: block; width: 100%; height: 2px; background: var(--c-line); transition: background 0.4s ease; }
+  .slider__bar[aria-current] span { background: var(--c-accent); }
+
+  @media (min-width: 768px) {
+    .slider { gap: 32px; }
+    .slider__stage { height: 520px; }
+    .slider__caption { left: 28px; right: auto; bottom: 28px; padding: 18px 24px; gap: 20px; }
+    .slider__num { font-size: 40px; }
+    .slider__title { font-size: 28px; }
+  }
+
+  @media (min-width: 1200px) {
+    .slider { gap: 40px; }
+    .slider__head { gap: 64px; }
+    .slider__arrows { gap: 12px; }
+    .slider__arrow { width: 64px; }
+    .slider__stage { height: 720px; }
+    .slider__caption { left: 32px; bottom: 32px; padding: 20px 28px; gap: 22px; }
+    .slider__num { font-size: 46px; }
+    .slider__title { font-size: 31px; }
+    .slider__footer { gap: 28px; }
+    .slider__count { min-width: 76px; }
+  }
+</style>

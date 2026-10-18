@@ -1,0 +1,51 @@
+/* ==========================================================================
+   Animaciones globales (reutilizadas por varios componentes)
+   ========================================================================== */
+
+/* Llaves que se balancean (dossier y menú móvil) */
+@keyframes dd-swing {
+  0%   { transform: rotate(0); }
+  20%  { transform: rotate(12deg); }
+  40%  { transform: rotate(-8deg); }
+  60%  { transform: rotate(5deg); }
+  80%  { transform: rotate(-3deg); }
+  100% { transform: rotate(0); }
+}
+
+/* Caída suave desde arriba */
+@keyframes dd-drop {
+  from { opacity: 0; transform: translateY(-40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dd-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dd-pop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.anim-swing {
+  transform-origin: 45% 5%;
+  animation: dd-swing 2.2s ease-in-out 0.8s 2;
+}
+.anim-swing--loop { animation: dd-swing 2.2s ease-in-out infinite; }
+
+.anim-drop { animation: dd-drop 0.6s var(--ease-out) 0.15s both; }
+.anim-fade { animation: dd-fade 0.35s ease both; }
+.anim-pop  { animation: dd-pop 0.22s var(--ease-out) both; }
+
+/* Iconos de redes: crecen y se aclaran */
+.hover-grow { transition: transform 0.3s ease, color 0.3s ease; }
+.hover-grow:hover { transform: scale(1.2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

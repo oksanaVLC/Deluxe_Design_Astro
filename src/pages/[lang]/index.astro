@@ -1,0 +1,12 @@
+---
+// Inglés, ruso y francés → /en/, /ru/, /fr/
+import Home from '../../views/Home.astro';
+import type { Lang } from '../../i18n';
+
+export function getStaticPaths() {
+  return (['en', 'ru', 'fr'] as const).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+---
+<Home lang={lang} />

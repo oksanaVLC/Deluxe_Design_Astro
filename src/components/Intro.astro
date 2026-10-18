@@ -1,0 +1,70 @@
+---
+import { useTranslations, asset, type Lang } from '../i18n';
+import { images, sections } from '../data/site';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang).intro;
+---
+<section id={sections.project} class="intro container">
+  <div class="intro__text">
+    <span class="eyebrow">{t.eyebrow}</span>
+    <h2 class="h2 intro__title">{t.title} <em>{t.titleEm}</em></h2>
+    <p class="intro__p">{t.text}</p>
+    <a href={`#${sections.process}`} class="intro__link">
+      {t.link}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg>
+    </a>
+  </div>
+  <div class="intro__media">
+    <img class="intro__img intro__img--main" src={asset(images.livingSea)} alt={t.imgMainAlt} loading="lazy" decoding="async" />
+    <img class="intro__img intro__img--second" src={asset(images.villaPool)} alt={t.imgSecondAlt} loading="lazy" decoding="async" />
+  </div>
+</section>
+
+<style>
+  .intro {
+    padding-block: var(--section-y);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-lg);
+  }
+  .intro__text { display: flex; flex-direction: column; gap: 24px; }
+  .intro__title { line-height: 1.12; }
+  .intro__p { color: var(--c-muted); font-size: calc(var(--fs-body) + 2px); max-width: 620px; }
+  .intro__link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid currentColor;
+    text-decoration: none;
+    font-size: var(--fs-button);
+    font-weight: 600;
+    letter-spacing: var(--ls-button);
+    text-transform: uppercase;
+  }
+  .intro__link svg { transition: transform 0.3s ease; }
+  .intro__link:hover svg { transform: translateX(4px); }
+
+  .intro__media { position: relative; height: 440px; }
+  .intro__img { position: absolute; object-fit: cover; }
+  .intro__img--main { right: 0; top: 0; width: 90%; height: 340px; }
+  .intro__img--second { left: 0; bottom: 0; width: 56%; height: 180px; border: 10px solid var(--c-stone); }
+
+  @media (min-width: 768px) {
+    .intro__text { gap: 28px; }
+    .intro__media { height: 580px; }
+    .intro__img--main { width: 86%; height: 470px; }
+    .intro__img--second { width: 46%; height: 250px; border-width: 12px; }
+  }
+
+  @media (min-width: 1200px) {
+    .intro { display: grid; grid-template-columns: 5fr 7fr; gap: 96px; align-items: center; }
+    .intro__text { gap: 32px; }
+    .intro__p { max-width: 480px; }
+    .intro__media { height: 680px; }
+    .intro__img--main { width: 88%; height: 600px; }
+    .intro__img--second { width: 42%; height: 300px; }
+  }
+</style>

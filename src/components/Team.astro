@@ -1,0 +1,62 @@
+---
+import { useTranslations, asset, type Lang } from '../i18n';
+import { team, sections } from '../data/site';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang).team;
+---
+<section id={sections.team} class="team container">
+  <div class="section-head">
+    <div class="section-head__title">
+      <span class="eyebrow">{t.eyebrow}</span>
+      <h2 class="h2">{t.title} <em>{t.titleEm}</em></h2>
+    </div>
+    <p class="section-head__text">{t.text}</p>
+  </div>
+  <div class="team__grid">
+    {team.map((m, i) => (
+      <article class="team__card">
+        <img src={asset(m.photo)} alt={m.name} loading="lazy" decoding="async" />
+        <div class="team__info">
+          <h3 class="team__name">{m.name}</h3>
+          <span class="team__role">{t.members[i].role}</span>
+          <p class="team__bio">{t.members[i].bio}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .team { padding-block: var(--section-y); background: var(--c-white); display: flex; flex-direction: column; gap: 36px; }
+  .team__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; }
+  .team__card { display: flex; flex-direction: column; gap: 14px; }
+  .team__card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: top;
+    filter: grayscale(1);
+    transition: filter 0.5s ease;
+  }
+  .team__card:hover img { filter: grayscale(0); }
+  .team__info { display: flex; flex-direction: column; gap: 4px; }
+  .team__name { font-family: var(--f-heading); font-weight: 500; font-size: 25px; line-height: 1.15; }
+  .team__role { font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-accent); }
+  .team__bio { margin-top: 6px; font-size: var(--fs-small); color: var(--c-muted); }
+
+  @media (min-width: 768px) {
+    .team { gap: 48px; }
+    .team__grid { gap: 48px 28px; }
+    .team__card { gap: 18px; }
+    .team__card img { height: 400px; }
+    .team__name { font-size: var(--fs-h3); }
+    .team__role { letter-spacing: 0.22em; }
+    .team__bio { font-size: var(--fs-body); }
+  }
+  @media (min-width: 1200px) {
+    .team { gap: 64px; }
+    .team__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+    .team__card img { height: 420px; }
+  }
+</style>

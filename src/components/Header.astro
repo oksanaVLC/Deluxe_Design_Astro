@@ -1,0 +1,302 @@
+
+---
+import { contact, images, sections } from '../data/site';
+import { asset, useTranslations, type Lang } from '../i18n';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const links = [
+  { id: sections.project, label: t.nav.project },
+  { id: sections.process, label: t.nav.process },
+  { id: sections.surroundings, label: t.nav.surroundings },
+  { id: sections.team, label: t.nav.team },
+  { id: sections.contact, label: t.nav.contact },
+];
+---
+
+<header class="header">
+  <div class="header__inner container">
+    <a
+      href={`#${sections.home}`}
+      class="header__logo"
+      aria-label={t.nav.homeLink}
+    >
+      <img
+        src={asset(images.logoWhite)}
+        alt="Deluxe Design Properties"
+        width="700"
+        height="445"
+      />
+    </a>
+
+    <nav class="header__nav" aria-label={t.nav.main}>
+      {links.map((link) => (
+        <a href={`#${link.id}`}>{link.label}</a>
+      ))}
+    </nav>
+
+    <div class="header__actions">
+      <LanguageSwitcher lang={lang} />
+
+      <a
+        href={contact.clientAreaUrl}
+        class="header__client"
+        aria-label={t.nav.clientArea}
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
+        </svg>
+
+        <span class="header__client-text">{t.nav.clientArea}</span>
+      </a>
+
+      <a href={`#${sections.dossier}`} class="header__dossier">
+        {t.nav.dossier}
+      </a>
+
+      <button
+        type="button"
+        class="header__menu"
+        aria-label={t.nav.openMenu}
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-open
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <circle cx="4" cy="4" r="2.3" />
+          <circle cx="12" cy="4" r="2.3" />
+          <circle cx="20" cy="4" r="2.3" />
+          <circle cx="4" cy="12" r="2.3" />
+          <circle cx="12" cy="12" r="2.3" />
+          <circle cx="20" cy="12" r="2.3" />
+          <circle cx="4" cy="20" r="2.3" />
+          <circle cx="12" cy="20" r="2.3" />
+          <circle cx="20" cy="20" r="2.3" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: var(--header-h);
+    flex: 0 0 auto;
+    color: var(--c-white);
+    white-space: nowrap;
+  }
+
+  /*
+   * El contenedor interior comparte el mismo ancho máximo
+   * que el Hero y las demás secciones.
+   */
+  .header__inner.container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(12px, 2vw, 32px);
+  }
+
+  .header__logo {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: 0;
+    text-decoration: none;
+  }
+
+  .header__logo img {
+    display: block;
+    width: auto;
+    height: 42px;
+    max-width: none;
+    object-fit: contain;
+  }
+
+  .header__nav {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex: 0 1 auto;
+    min-width: 0;
+    gap: clamp(14px, 1.5vw, 26px);
+  }
+
+  .header__nav a,
+  .header__client,
+  .header__dossier {
+    color: var(--c-white);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .header__nav a,
+  .header__client {
+    transition: color 0.2s ease;
+  }
+
+  .header__nav a:hover,
+  .header__client:hover {
+    color: var(--c-social);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    gap: 4px;
+    margin-left: auto;
+  }
+
+  .header__client {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .header__client svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+  }
+
+  .header__client-text {
+    display: none;
+  }
+
+  .header__dossier {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding-inline: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    transition:
+      background 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .header__dossier:hover {
+    background: var(--c-white);
+    color: var(--c-ink);
+  }
+
+  .header__menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--c-white);
+    cursor: pointer;
+  }
+
+  .header__menu svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Tablet */
+  @media (min-width: 768px) {
+    .header__logo img {
+      height: 48px;
+    }
+
+    .header__actions {
+      gap: 10px;
+    }
+
+    .header__dossier {
+      display: inline-flex;
+    }
+  }
+
+  /* Navegación completa en escritorio */
+  @media (min-width: 1440px) {
+    .header__logo img {
+      height: 54px;
+    }
+
+    .header__nav {
+      display: flex;
+    }
+
+    .header__actions {
+      gap: 18px;
+      padding-left: 20px;
+      border-left: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .header__client {
+      width: auto;
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    .header__client svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .header__client-text {
+      display: inline;
+    }
+
+    .header__dossier {
+      min-height: 46px;
+      padding-inline: 20px;
+    }
+
+    .header__menu {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header__nav a,
+    .header__client,
+    .header__dossier {
+      transition: none;
+    }
+  }
+</style>

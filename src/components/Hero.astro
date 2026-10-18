@@ -1,0 +1,379 @@
+
+---
+import { sections } from '../data/site';
+import { useTranslations, type Lang } from '../i18n';
+import Header from './Header.astro';
+import HeroVideo from './HeroVideo.astro';
+import SocialLinks from './SocialLinks.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const arrow =
+  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>';
+---
+
+<section id={sections.home} class="hero">
+  <!-- Vídeo de fondo -->
+  <div class="hero__video">
+    <HeroVideo />
+  </div>
+
+  <!-- Capa de contraste -->
+  <div class="hero__overlay" aria-hidden="true"></div>
+
+  <Header lang={lang} />
+
+  <!-- Redes sociales en móvil y tablet -->
+  <div class="hero__social-side">
+    <SocialLinks
+      direction="column"
+      scale={0.92}
+      label={t.nav.social}
+    />
+  </div>
+
+  <!-- Contenido alineado con el ancho máximo global -->
+  <div class="hero__body container">
+    <div class="hero__content">
+      <span class="hero__eyebrow">
+        {t.hero.eyebrow}
+      </span>
+
+      <h1 class="hero__title">
+        {t.hero.title} <em>{t.hero.titleEm}</em>
+      </h1>
+
+      <p class="hero__text">
+        <span class="hero__text-long">{t.hero.text}</span>
+        <span class="hero__text-short">{t.hero.textShort}</span>
+      </p>
+
+      <div class="hero__ctas">
+        <a href={`#${sections.project}`} class="btn btn--light">
+          {t.hero.ctaProject}
+          <Fragment set:html={arrow} />
+        </a>
+
+        <a
+          href={`#${sections.contact}`}
+          class="btn btn--ghost hero__cta-talk"
+        >
+          {t.hero.ctaTalk}
+        </a>
+
+        <a
+          href={`#${sections.dossier}`}
+          class="btn btn--ghost hero__cta-dossier"
+        >
+          {t.nav.dossier}
+        </a>
+      </div>
+    </div>
+
+    <!-- Información secundaria en escritorio -->
+    <aside class="hero__aside">
+      <SocialLinks label={t.nav.social} />
+
+      <span>{t.hero.location}</span>
+
+      <span class="hero__discover">
+        {t.hero.discover}
+        <span class="hero__line" aria-hidden="true"></span>
+      </span>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: max(var(--hero-h), 100svh);
+    overflow: hidden;
+    background: var(--c-ink-soft);
+    color: var(--c-white);
+  }
+
+  /* Vídeo a pantalla completa, sin limitarlo a --body-width */
+  .hero__video {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: var(--c-ink-soft);
+    pointer-events: none;
+  }
+
+  .hero__video :global(video) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center center;
+    border: 0;
+  }
+
+  /* Contraste uniforme sobre el vídeo */
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgba(12, 11, 10, 0.42);
+    pointer-events: none;
+  }
+
+  /* El Header conserva su estructura y se sitúa sobre el overlay */
+  .hero > :global(header) {
+    position: relative;
+    z-index: 4;
+    flex: 0 0 auto;
+  }
+
+  /* Redes sociales en móvil */
+  .hero__social-side {
+    position: absolute;
+    top: calc(var(--header-h, 76px) + 10px);
+    right: 10px;
+    z-index: 3;
+  }
+
+  /* Contenido alineado con .container y --body-width */
+  .hero__body.container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1 0 auto;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .hero__content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 20px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero__eyebrow {
+    padding-right: 40px;
+    color: var(--c-on-dark-eyebrow);
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+  }
+
+  .hero__title {
+    padding-right: 40px;
+    font-family: var(--f-heading);
+    font-size: var(--fs-h1);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    overflow-wrap: break-word;
+  }
+
+  .hero__title em {
+    font: inherit;
+  }
+
+  .hero__text {
+    padding-right: 40px;
+    color: var(--c-on-dark-light);
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+  }
+
+  .hero__text-long {
+    display: none;
+  }
+
+  .hero__text-short {
+    display: inline;
+  }
+
+  .hero__ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .hero__ctas .btn {
+    min-height: 56px;
+  }
+
+  .hero__cta-talk {
+    display: none;
+  }
+
+  .hero__cta-dossier {
+    display: inline-flex;
+  }
+
+  .hero__aside {
+    display: none;
+  }
+
+  .hero__discover {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero__line {
+    width: 1px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  /* Móvil estrecho */
+  @media (max-width: 380px) {
+    .hero__body.container {
+      padding-top: 32px;
+      padding-bottom: 28px;
+    }
+
+    .hero__content {
+      gap: 16px;
+    }
+
+    .hero__title {
+      font-size: clamp(36px, 10vw, var(--fs-h1));
+    }
+
+    .hero__ctas .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Tablet */
+  @media (min-width: 768px) {
+    .hero__social-side {
+      top: calc(var(--header-h, 88px) + 16px);
+      right: 30px;
+    }
+
+    .hero__social-side::before {
+      display: block;
+      width: 1px;
+      height: 36px;
+      margin: 0 auto 6px;
+      background: rgba(230, 209, 152, 0.55);
+      content: '';
+    }
+
+    .hero__body.container {
+      gap: 32px;
+      padding-top: 48px;
+      padding-bottom: 64px;
+    }
+
+    .hero__content {
+      gap: 26px;
+    }
+
+    .hero__eyebrow,
+    .hero__title,
+    .hero__text {
+      padding-right: 0;
+    }
+
+    .hero__text {
+      max-width: 560px;
+    }
+
+    .hero__text-long {
+      display: inline;
+    }
+
+    .hero__text-short {
+      display: none;
+    }
+
+    .hero__ctas {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero__cta-talk {
+      display: inline-flex;
+    }
+
+    .hero__cta-dossier {
+      display: none;
+    }
+  }
+
+  /* Escritorio */
+  @media (min-width: 1200px) {
+    .hero__social-side {
+      display: none;
+    }
+
+    .hero__body.container {
+      gap: 48px;
+      padding-top: 48px;
+      padding-bottom: 72px;
+    }
+
+    .hero__content {
+      max-width: 1080px;
+      gap: 28px;
+    }
+
+    .hero__title {
+      line-height: 0.98;
+    }
+
+    .hero__text {
+      max-width: 700px;
+    }
+
+    .hero__ctas {
+      margin-top: 8px;
+    }
+
+    .hero__ctas .btn {
+      min-height: 58px;
+    }
+
+    .hero__aside {
+      display: flex;
+      flex: 0 0 auto;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
+      color: var(--c-on-dark-eyebrow);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .hero__aside :global(.social) {
+      margin-bottom: 10px;
+    }
+  }
+</style>

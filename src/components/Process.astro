@@ -1,0 +1,51 @@
+---
+import { useTranslations, asset, type Lang } from '../i18n';
+import { processImages, sections } from '../data/site';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang).process;
+---
+<section id={sections.process} class="process container">
+  <div class="section-head">
+    <div class="section-head__title">
+      <span class="eyebrow">{t.eyebrow}</span>
+      <h2 class="h2">{t.title} <em>{t.titleEm}</em></h2>
+    </div>
+    <p class="section-head__text">{t.text}</p>
+  </div>
+  <ol class="process__list">
+    {t.steps.map((step, i) => (
+      <li class="process__step">
+        <img src={asset(processImages[i])} alt={step.alt} loading="lazy" decoding="async" />
+        <div class="process__heading">
+          <span class="process__num">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="process__title">{step.title}</h3>
+        </div>
+        <p class="process__text">{step.text}</p>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .process { padding-block: var(--section-y); display: flex; flex-direction: column; gap: 36px; }
+  .process__list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .process__step { display: flex; flex-direction: column; gap: 18px; }
+  .process__step img { width: 100%; height: 230px; object-fit: cover; }
+  .process__heading { display: flex; align-items: baseline; gap: 14px; }
+  .process__num { font-family: var(--f-heading); font-size: 24px; color: var(--c-accent); }
+  .process__title { font-family: var(--f-heading); font-weight: 500; font-size: var(--fs-h3); line-height: 1.15; }
+  .process__text { color: var(--c-muted); }
+
+  @media (min-width: 768px) {
+    .process { gap: 48px; }
+    .process__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 28px; }
+    .process__step img { height: 300px; }
+  }
+  @media (min-width: 1200px) {
+    .process { gap: 64px; }
+    .process__list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+    .process__step { gap: 22px; }
+    .process__step img { height: 360px; }
+  }
+</style>

@@ -1,0 +1,17 @@
+{
+  "name": "deluxe-design-properties",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/fahkwang": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "astro": "^7.4.0"
+  }
+}

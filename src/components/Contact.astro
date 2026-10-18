@@ -1,0 +1,76 @@
+---
+import { useTranslations, asset, type Lang } from '../i18n';
+import { images, contact, sections } from '../data/site';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang).contact;
+---
+<section id={sections.contact} class="contact container">
+  <img class="contact__img" src={asset(images.teamMeeting)} alt={t.imgAlt} loading="lazy" decoding="async" />
+  <div class="contact__body">
+    <span class="eyebrow">{t.eyebrow}</span>
+    <h2 class="h2">{t.title} <em>{t.titleEm}</em></h2>
+
+    <!-- data-netlify: en Netlify el formulario funciona sin backend -->
+    <form class="contact__form" name="contacto" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="contacto" />
+      <p class="sr-only"><label>No rellenar <input name="bot-field" /></label></p>
+      <label class="field">{t.name}<input type="text" name="nombre" autocomplete="name" required /></label>
+      <label class="field">{t.email}<input type="email" name="email" autocomplete="email" required /></label>
+      <label class="field contact__full">{t.subject}<input type="text" name="asunto" /></label>
+      <label class="field contact__full">{t.message}<textarea name="mensaje" rows="3" required></textarea></label>
+      <button type="submit" class="btn btn--dark contact__submit">{t.send}</button>
+    </form>
+
+    <div class="contact__info">
+      <div class="contact__item">
+        <span class="contact__label">{t.emailLabel}</span>
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </div>
+      <div class="contact__item">
+        <span class="contact__label">{t.phoneLabel}</span>
+        <a href={contact.phoneHref}>{contact.phone}</a>
+      </div>
+      <div class="contact__item">
+        <span class="contact__label">{t.officeLabel}</span>
+        <span>{t.office}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { padding-block: var(--section-y); display: flex; flex-direction: column; gap: 32px; }
+  .contact__img { width: 100%; height: 240px; object-fit: cover; }
+  .contact__body { display: flex; flex-direction: column; gap: 28px; }
+
+  .contact__form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .contact__submit { justify-self: stretch; }
+
+  .contact__info {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 24px;
+    border-top: 1px solid var(--c-line);
+    white-space: nowrap;
+  }
+  .contact__item { display: flex; flex-direction: column; gap: 4px; }
+  .contact__item a { text-decoration: none; }
+  .contact__label { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-muted); }
+
+  @media (min-width: 768px) {
+    .contact { gap: 44px; }
+    .contact__img { height: 400px; }
+    .contact__body { gap: 32px; }
+    .contact__form { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 32px; }
+    .contact__full { grid-column: 1 / -1; }
+    .contact__submit { grid-column: 1 / -1; justify-self: start; padding: 0 40px; }
+    .contact__info { flex-direction: row; flex-wrap: wrap; gap: 24px 48px; padding-top: 28px; }
+  }
+
+  @media (min-width: 1200px) {
+    .contact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 96px; align-items: stretch; }
+    .contact__img { height: 100%; min-height: 640px; }
+  }
+</style>

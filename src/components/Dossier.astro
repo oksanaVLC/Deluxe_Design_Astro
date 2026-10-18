@@ -1,0 +1,174 @@
+---
+import { images, sections } from '../data/site';
+import { asset, useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const t = useTranslations(Astro.props.lang).dossier;
+---
+
+<section id={sections.dossier} class="dossier">
+  <img
+    class="dossier__key anim-swing"
+    src={asset(images.key)}
+    alt=""
+    width="900"
+    height="879"
+    loading="lazy"
+  />
+
+  <div class="dossier__text">
+    <h2 class="dossier__title">
+      {t.title} <em>{t.titleEm}</em>
+    </h2>
+    <p class="dossier__p">{t.text}</p>
+  </div>
+
+  <form
+    class="dossier__form"
+    name="dossier"
+    method="POST"
+    data-netlify="true"
+  >
+    <input type="hidden" name="form-name" value="dossier" />
+
+    <label class="field dossier__field">
+      {t.emailLabel}
+      <input
+        type="email"
+        name="email"
+        autocomplete="email"
+        required
+      />
+    </label>
+
+    <button type="submit" class="btn btn--dark dossier__btn">
+      {t.cta}
+    </button>
+  </form>
+</section>
+
+<style>
+  .dossier {
+    width: calc(100% - 24px);
+    max-width: var(--body-width, 1600px);
+    margin-inline: auto;
+    padding: 36px 20px;
+
+    background: var(--c-sand);
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .dossier__key {
+    display: block;
+    width: 110px;
+    height: auto;
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
+
+  .dossier:hover .dossier__key {
+    animation: dd-swing 2.2s ease-in-out infinite;
+  }
+
+  .dossier__text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .dossier__title {
+    font-family: var(--f-heading);
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.1;
+  }
+
+  .dossier__title em {
+    font-style: italic;
+  }
+
+  .dossier__p {
+    color: var(--c-muted);
+  }
+
+  .dossier__form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .dossier__field {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .dossier__field input {
+    width: 100%;
+    height: 50px;
+    border-bottom-color: var(--c-ink);
+  }
+
+  .dossier__btn {
+    flex: 0 0 auto;
+    height: 54px;
+    padding-inline: 22px;
+  }
+
+  @media (min-width: 768px) {
+    .dossier {
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 28px 36px;
+      align-items: center;
+    }
+
+    .dossier__key {
+      width: 150px;
+      grid-row: span 2;
+    }
+
+    .dossier__title {
+      font-size: 41px;
+    }
+
+    .dossier__form {
+      gap: 16px;
+    }
+
+    .dossier__btn {
+      padding-inline: 30px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .dossier {
+      padding: 64px 72px;
+      grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 40px;
+    }
+
+    .dossier__key {
+      width: 200px;
+      grid-row: auto;
+    }
+
+    .dossier__title {
+      font-size: 48px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dossier:hover .dossier__key {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang).why;
+---
+<section class="why container">
+  <div class="why__head">
+    <span class="eyebrow why__eyebrow">{t.eyebrow}</span>
+    <h2 class="h2">{t.title} <em>{t.titleEm}</em></h2>
+    <p class="why__intro">{t.text}</p>
+  </div>
+  <ol class="why__list">
+    {t.items.map((item, i) => (
+      <li class="why__item">
+        <span class="why__num">{String(i + 1).padStart(2, '0')}</span>
+        <div>
+          <h3 class="why__title">{item.title}</h3>
+          <p class="why__text">{item.text}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .why {
+    padding-block: var(--section-y);
+    background: var(--c-ink);
+    color: var(--c-white);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .why__head { display: flex; flex-direction: column; gap: 20px; }
+  .why__eyebrow { color: var(--c-gold); }
+  .why__intro { color: var(--c-on-dark-muted); max-width: 520px; }
+
+  .why__list { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .why__item { display: flex; gap: 20px; padding: 24px 0; border-top: 1px solid var(--c-line-dark); }
+  .why__item:last-child { border-bottom: 1px solid var(--c-line-dark); }
+  .why__num { font-family: var(--f-heading); font-size: 26px; line-height: 1.4; color: var(--c-gold); }
+  .why__title { margin-bottom: 6px; font-size: var(--fs-body); font-weight: 600; letter-spacing: 0.06em; }
+  .why__text { color: var(--c-on-dark-muted); }
+
+  @media (min-width: 768px) {
+    .why { padding-block: 96px; gap: 44px; }
+    .why__list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+    .why__item { gap: 24px; padding: 28px 0; }
+    .why__item:nth-last-child(2) { border-bottom: 1px solid var(--c-line-dark); }
+  }
+
+  @media (min-width: 1200px) {
+    .why { padding-block: 128px; display: grid; grid-template-columns: 4fr 8fr; gap: 96px; }
+    .why__head { gap: 24px; }
+    .why__head .h2 { font-size: 62px; }
+    .why__intro { max-width: 340px; }
+    .why__list { column-gap: 64px; }
+  }
+</style>

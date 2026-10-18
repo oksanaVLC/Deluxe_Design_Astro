@@ -1,0 +1,75 @@
+---
+import SocialLinks from './SocialLinks.astro';
+import { useTranslations, asset, type Lang } from '../i18n';
+import { images, contact, sections } from '../data/site';
+
+interface Props { lang: Lang }
+const t = useTranslations(Astro.props.lang);
+const year = new Date().getFullYear();
+---
+<footer class="footer container">
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <img src={asset(images.logoWhite)} alt="Deluxe Design Properties" width="700" height="445" loading="lazy" />
+      <p>{t.footer.tagline}</p>
+      <SocialLinks label={t.nav.social} />
+    </div>
+    <nav class="footer__col" aria-label={t.footer.navigation}>
+      <span class="footer__heading">{t.footer.navigation}</span>
+      <a href={`#${sections.home}`}>{t.nav.home}</a>
+      <a href={`#${sections.project}`}>{t.nav.project}</a>
+      <a href={`#${sections.team}`}>{t.nav.team}</a>
+      <a href={`#${sections.contact}`}>{t.nav.contact}</a>
+    </nav>
+    <div class="footer__col">
+      <span class="footer__heading">{t.footer.contact}</span>
+      <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      <a href={contact.phoneHref}>{contact.phone}</a>
+      <span>{t.contact.office}</span>
+    </div>
+    <div class="footer__col">
+      <span class="footer__heading">{t.footer.legal}</span>
+      <a href="#">{t.footer.privacy}</a>
+      <a href="#">{t.footer.notice}</a>
+      <a href="#">{t.footer.cookies}</a>
+    </div>
+  </div>
+  <div class="footer__bottom">© {year} Deluxe Design Properties. {t.footer.rights}</div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 72px;
+    padding-top: 48px;
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
+    background: var(--c-ink);
+    color: var(--c-on-dark-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  .footer__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .footer__brand { display: flex; flex-direction: column; gap: 18px; }
+  .footer__brand img { height: 60px; width: auto; align-self: flex-start; }
+  .footer__brand p { font-size: var(--fs-small); max-width: 320px; }
+  .footer__brand :global(.social) { margin-left: -10px; }
+  .footer__col { display: flex; flex-direction: column; gap: 10px; font-size: var(--fs-small); }
+  .footer__col a { color: var(--c-on-dark-muted); text-decoration: none; }
+  .footer__col a[href^='mailto'], .footer__col a[href^='tel'] { white-space: nowrap; }
+  .footer__col a:hover { color: var(--c-social); }
+  .footer__heading { margin-bottom: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-white); }
+  .footer__bottom { padding-top: 24px; border-top: 1px solid var(--c-line-dark); font-size: 13px; }
+
+  @media (min-width: 768px) {
+    .footer { margin-top: 96px; padding-top: 64px; padding-bottom: 40px; gap: 48px; }
+    .footer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px 40px; }
+    .footer__brand { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1200px) {
+    .footer { margin-top: 120px; padding-top: 80px; padding-bottom: 48px; gap: 64px; }
+    .footer__grid { grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+    .footer__brand { grid-column: auto; gap: 20px; }
+    .footer__brand img { height: 72px; }
+    .footer__brand :global(.social) { margin-left: 0; margin-top: 4px; }
+  }
+</style>
