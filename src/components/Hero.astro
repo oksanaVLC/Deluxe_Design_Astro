@@ -23,7 +23,7 @@ const arrow =
     <HeroVideo />
   </div>
 
-  <!-- Capa de contraste -->
+  <!-- Oscurecimiento sutil -->
   <div class="hero__overlay" aria-hidden="true"></div>
 
   <Header lang={lang} />
@@ -37,7 +37,7 @@ const arrow =
     />
   </div>
 
-  <!-- Contenido alineado con el ancho máximo global -->
+  <!-- Contenido principal alineado con el ancho global -->
   <div class="hero__body container">
     <div class="hero__content">
       <span class="hero__eyebrow">
@@ -102,7 +102,7 @@ const arrow =
     color: var(--c-white);
   }
 
-  /* Vídeo a pantalla completa, sin limitarlo a --body-width */
+  /* Vídeo: cubre la pantalla sin escalado artificial */
   .hero__video {
     position: absolute;
     inset: 0;
@@ -121,19 +121,20 @@ const arrow =
     max-width: none;
     object-fit: cover;
     object-position: center center;
+    transform: none;
     border: 0;
   }
 
-  /* Contraste uniforme sobre el vídeo */
+  /* Menos oscuro para conservar el detalle del vídeo */
   .hero__overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: rgba(12, 11, 10, 0.42);
+    background: rgba(12, 11, 10, 0.20);
     pointer-events: none;
   }
 
-  /* El Header conserva su estructura y se sitúa sobre el overlay */
+  /* Cabecera por encima de las capas del fondo */
   .hero > :global(header) {
     position: relative;
     z-index: 4;
@@ -148,7 +149,7 @@ const arrow =
     z-index: 3;
   }
 
-  /* Contenido alineado con .container y --body-width */
+  /* Contenido alineado con --body-width */
   .hero__body.container {
     position: relative;
     z-index: 2;
@@ -192,6 +193,7 @@ const arrow =
 
   .hero__title em {
     font: inherit;
+    font-style: italic;
   }
 
   .hero__text {
@@ -246,7 +248,7 @@ const arrow =
     background: rgba(255, 255, 255, 0.6);
   }
 
-  /* Móvil estrecho */
+  /* Móviles pequeños */
   @media (max-width: 380px) {
     .hero__body.container {
       padding-top: 32px;
