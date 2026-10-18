@@ -20,7 +20,8 @@ const links = [
 ];
 ---
 
-<header class="header">
+<header class="header" data-header>
+  <div class="header__bar">
   <div class="header__inner container">
     <a
       href={`#${sections.home}`}
@@ -98,18 +99,56 @@ const links = [
       </button>
     </div>
   </div>
+  </div>
 </header>
 
 <style>
-  .header {
-    position: relative;
-    z-index: 3;
-    width: 100%;
-    height: var(--header-h);
-    flex: 0 0 auto;
-    color: var(--c-white);
-    white-space: nowrap;
-  }
+ /* El <header> se queda en el flujo como "hueco" de la misma altura */
+.header {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: var(--header-h);
+  flex: 0 0 auto;
+  color: var(--c-white);
+  white-space: nowrap;
+}
+
+/* La barra real, siempre fija arriba */
+.header__bar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--header-h);
+  background: transparent;
+  transition:
+    background 0.3s ease,
+    height 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.header.is-scrolled .header__bar {
+  height: calc(var(--header-h) - 16px);
+  background: rgba(17, 17, 17, 0.85); /* o var(--c-ink) si es oscuro */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.header__logo img {
+  transition: height 0.3s ease;
+}
+
+.header.is-scrolled .header__logo img {
+  height: 36px;
+}
+
+@media (min-width: 768px) {
+  .header.is-scrolled .header__logo img { height: 40px; }
+}
+
+@media (min-width: 1440px) {
+  .header.is-scrolled .header__logo img { height: 44px; }
+}
 
   /*
    * El contenedor interior comparte el mismo ancho máximo
@@ -300,3 +339,29 @@ const links = [
     }
   }
 </style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+
+  if (header) {
+    let ticking = false;
+
+    const update = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 10);
+      ticking = false;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+
+    update(); // por si la página carga ya con scroll (recarga o #ancla)
+  }
+</script>
